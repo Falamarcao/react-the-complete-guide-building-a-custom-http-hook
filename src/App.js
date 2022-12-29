@@ -1,13 +1,23 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 
 import Tasks from "./components/Tasks/Tasks";
 import NewTask from "./components/NewTask/NewTask";
-import useGET from "./hooks/useGET";
+import useRequests from "./hooks/useRequests";
 
 function App() {
-  const [fetchTasks, tasks, setTasks, isLoading, error] = useGET(
-    "https://react-course-31c1e-default-rtdb.firebaseio.com/tasks.json"
-  );
+  const [fetchTasks, isLoading, error, tasks, setTasks] = useRequests({
+    url: "https://react-course-31c1e-default-rtdb.firebaseio.com/tasks.json",
+    transform: (json) =>
+      Object.keys(json || {}).map((key) => ({
+        id: key,
+        text: json[key].text,
+      })),
+  });
+
+  useEffect(() => {
+    fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));
