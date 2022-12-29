@@ -5,19 +5,19 @@ import NewTask from "./components/NewTask/NewTask";
 import useRequests from "./hooks/useRequests";
 
 function App() {
-  const [fetchTasks, isLoading, error, tasks, setTasks] = useRequests({
-    url: "https://react-course-31c1e-default-rtdb.firebaseio.com/tasks.json",
-    transform: (json) =>
-      Object.keys(json || {}).map((key) => ({
-        id: key,
-        text: json[key].text,
-      })),
-  });
+  const [fetchTasks, isLoading, error, tasks, setTasks] = useRequests();
 
   useEffect(() => {
-    fetchTasks();
+    fetchTasks({
+      url: "https://react-course-31c1e-default-rtdb.firebaseio.com/tasks.json",
+      transform: (json) =>
+        Object.keys(json || {}).map((key) => ({
+          id: key,
+          text: json[key].text,
+        })),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
     setTasks((prevTasks) => prevTasks.concat(task));

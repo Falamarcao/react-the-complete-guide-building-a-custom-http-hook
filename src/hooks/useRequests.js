@@ -1,27 +1,30 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import useLoading from "./useLoading";
 
-const useRequests = ({ url, init, transform }) => {
+const useRequests = () => {
   const [state, setState] = useState([]);
 
-  const [callback, isLoading, error] = useLoading(async (input) => {
-    if (input && !init?.body) {
-      init.body = JSON.stringify(input);
-    }
+  const [callback, isLoading, error] = useLoading(
+    useCallback(async ({ url, init, transform }) => {
+      let body = init?.body;
+      if (init?.body instanceof Object) {
+        init.body = JSON.stringify(init.body);
+      }
 
-    const response = await fetch(url, init);
+      const response = await fetch(url, init);
 
-    if (!response.ok) {
-      throw new Error("Request failed!");
-    }
+      if (!response.ok) {
+        throw new Error("Request failed!");
+      }
 
-    const data = await response.json().then((json) => transform(json, input));
+      const data = await response.json().then((json) => transform(json, body));
 
-    setState(data);
+      setState(data);
 
-    return data;
-  });
+      return data;
+    }, [])
+  );
 
   return [callback, isLoading, error, state, setState];
 };
