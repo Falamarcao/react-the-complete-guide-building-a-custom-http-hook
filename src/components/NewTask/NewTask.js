@@ -15,12 +15,10 @@ const NewTask = (props) => {
         },
         body: { text: taskText },
       },
-      transform: (data, input) => ({
-        id: data.name,
-        text: input.text,
+      transform: (json) => ({
+        id: json.name, // Firebase data.name is ID of the created document.
+        text: taskText,
       }),
-
-      // Firebase data.name is ID of the created document.
     }).then((task) => props.onAddTask(task));
 
   return (

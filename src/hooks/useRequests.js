@@ -7,7 +7,6 @@ const useRequests = () => {
 
   const [callback, isLoading, error] = useLoading(
     useCallback(async ({ url, init, transform }) => {
-      let body = init?.body;
       if (init?.body instanceof Object) {
         init.body = JSON.stringify(init.body);
       }
@@ -18,7 +17,7 @@ const useRequests = () => {
         throw new Error("Request failed!");
       }
 
-      const data = await response.json().then((json) => transform(json, body));
+      const data = await response.json().then(transform);
 
       setState(data);
 
